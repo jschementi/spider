@@ -149,7 +149,7 @@ Spider.prototype.get = function (url, referer, state) {
         catch(e) {}
       }
       self.cache.set(url, resp.headers, body);
-      self._handler(url, referer, {fromCache:false, headers:resp.headers, body:body}, state);
+      self._handler(url, referer, {fromCache:false, headers:resp.headers, body:body, url: resp.request.href}, state);
     })
   });
   return this;
