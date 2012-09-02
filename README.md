@@ -38,10 +38,16 @@ Where the params are the following :
   * `this` - Will be a variable referencing the `Routes.match` return object/value with some other goodies added from spider. For more info see https://github.com/aaronblohowiak/routes.js
   * `window` - Will be a variable referencing the document's window.
   * `$` - Will be the variable referencing the jQuery Object.
+  * `state` - Any object passed as the `state` parameter to `spider.get`.
 
 ### Queuing an URL for spider to fetch.
 
-`spider.get(url)` where `url` is the url to fetch.
+#### spider.get(url, referer, state)
+Where the params are the following:
+
+* `url` - the url to visit.
+* `referer` (optional) - the `Referer` url to add to the request. Will be the current url if not provided.
+* `state` (optional) - any object to pass as the `state` parameter to any matching route handler.
 
 ### Extending / Replacing the MemoryCache 
 

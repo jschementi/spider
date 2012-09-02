@@ -83,7 +83,7 @@ function Spider (options) {
   this.jar = cookiejar.CookieJar();
 }
 util.inherits(Spider, events.EventEmitter)
-Spider.prototype.get = function (url, referer) {
+Spider.prototype.get = function (url, referer, state) {
   var self = this
     , h = copy(headers)
     ;
@@ -134,7 +134,7 @@ Spider.prototype.get = function (url, referer) {
       }
       if (resp.statusCode === 304) {
         self.cache.get(url, function (c_) {
-          self._handler(url, referer, {fromCache:true, headers:c_.headers, body:c_.body})
+          self._handler(url, referer, {fromCache:true, headers:c_.headers, body:c_.body}, state)
         });
         return;
       } else if (resp.statusCode !== 200) {
@@ -149,7 +149,7 @@ Spider.prototype.get = function (url, referer) {
         catch(e) {}
       }
       self.cache.set(url, resp.headers, body);
-      self._handler(url, referer, {fromCache:false, headers:resp.headers, body:body});
+      self._handler(url, referer, {fromCache:false, headers:resp.headers, body:body}, state);
     })
   });
   return this;
@@ -165,7 +165,7 @@ Spider.prototype.route = function (hosts, pattern, cb) {
   })
   return self;
 }
-Spider.prototype._handler = function (url, referer, response) {
+Spider.prototype._handler = function (url, referer, response, state) {
   var u = urlParse(url)
     , self = this
     ;
@@ -185,15 +185,15 @@ Spider.prototype._handler = function (url, referer, response) {
         if (!isUrl.test(h)) {
           h = urlResolve(url, h);
         }
-        self.get(h, url);
+        self.get(h, url, state);
       })
     }
 
     this.currentUrl = url;
     if (jsdom.defaultDocumentFeatures.ProcessExternalResources) {
-      $(function () { r.fn.call(r, window, window.$); })
+      $(function () { r.fn.call(r, window, window.$, state); })
     } else {
-      r.fn.call(r, window, window.$);
+      r.fn.call(r, window, window.$, state);
     }
     this.currentUrl = null;
       window.close(); //fix suggested by
